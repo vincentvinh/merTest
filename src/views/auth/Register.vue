@@ -1,81 +1,123 @@
 <template>
-  <div class="col-md-12">
-    <div class="card card-container">
-      <img
-        id="profile-img"
-        src="//ssl.gstatic.com/accounts/ui/avatar_2x.png"
-        class="profile-img-card"
-      />
-      <form name="form" @submit.prevent="handleRegister">
-        <div v-if="!successful">
-          <div class="form-group">
-            <label for="username">Username</label>
-            <input
-              v-model="user.username"
-              :rules="[v => !!v || 'Item is required']"
-              type="text"
-              class="form-control"
-              name="username"
-            />
-            <div
-              v-if="submitted && errors.has('username')"
-              class="alert-danger"
-            >{{errors.first('username')}}</div>
-          </div>
-          <div class="form-group">
-            <label for="email">Email</label>
-            <input
-              v-model="user.email"
-              :rules="[v => !!v || 'Item is required']"
-              type="email"
-              class="form-control"
-              name="email"
-            />
-            <div
-              v-if="submitted && errors.has('email')"
-              class="alert-danger"
-            >{{errors.first('email')}}</div>
-          </div>
-          <div class="form-group">
-            <label for="password">Password</label>
-            <input
-              v-model="user.password"
-              :rules="[v => !!v || 'Item is required']"
-              type="password"
-              class="form-control"
-              name="password"
-            />
-            <div
-              v-if="submitted && errors.has('password')"
-              class="alert-danger"
-            >{{errors.first('password')}}</div>
-          </div>
-          <div class="form-group">
-            <button class="btn btn-primary btn-block">Sign Up</button>
-          </div>
-        </div>
-      </form>
+       <v-form
+    ref="form"
+    v-model="valid"
+    lazy-validation
+  >
+    <v-text-field
+      v-model="user.full_name"
+      :counter="10"
+      :rules="nameRules"
+      label="Full Name"
+      required
+    ></v-text-field>
 
-      <div
-        v-if="message"
-        class="alert"
-        :class="successful ? 'alert-success' : 'alert-danger'"
-      >{{message}}</div>
-    </div>
-  </div>
+    <v-text-field
+      v-model="user.email"
+      :rules="emailRules"
+      label="E-mail"
+      required
+    ></v-text-field>
+
+   <v-text-field
+      v-model="user.password"
+      :append-icon="show1 ? 'mdi-eye' : 'mdi-eye-off'"
+      :rules="[rules.required, rules.min]"
+      :type="show1 ? 'text' : 'password'"
+      name="input-10-1"
+      label="Normal with hint text"
+      hint="At least 8 characters"
+      counter
+      @click:append="show1 = !show1"
+    ></v-text-field>
+
+    <v-checkbox
+      v-model="checkbox"
+      :rules="[v => !!v || 'You must agree to continue!']"
+      label="Do you agree?"
+      required
+    ></v-checkbox>
+
+    <v-btn
+      :disabled="!valid"
+      color="success"
+      class="mr-4"
+      @click="handleRegister"
+    >
+      Validate
+    </v-btn>
+
+    <v-btn
+      color="error"
+      class="mr-4"
+      @click="reset"
+    >
+      Reset Form
+    </v-btn>
+  </v-form>
 </template>
 
 <script>
-import User from '../../models/user'
 
 export default {
   name: 'Register',
-  data () {
-    return {
-      user: new User('', '', ''),
-      submitted: false,
-      successful: false,
-      message: ''
+  data: () => ({
+    user: {
+      // eslint-disable-next-line @typescript-eslint/camelcase
+      full_name: '',
+      email: '',
+      password: ''
+    },
+    valid: true,
+    nameRules: [
+      v => !!v || 'Name is required',
+      v => (v && v.length <= 10) || 'Name must be less than 10 characters'
+    ],
+    email: '',
+    emailRules: [
+      v => !!v || 'E-mail is required',
+      v => /.+@.+\..+/.test(v) || 'E-mail must be valid'
+    ],
+    show1: false,
+    password: 'Password',
+    rules: {
+      required: value => !!value || 'Required.',
+      min: v => v.length >= 8 || 'Min 8 characters',
+      emailMatch: () => ('The email and password you entered don\'t match')
+    },
+    checkbox: false,
+    isValid: true
+  }),
+
+  methods: {
+    validate () {
+      this.handleRegister()
+    },
+    reset () {
+      this.$refs.form.reset()
+    },
+    resetValidation () {
+      this.$refs.form.resetValidation()
+    },
+    handleRegister () {
+      this.message = ''
+      this.submitted = true
+      console.log(this.user)
+      if (this.isValid) {
+        this.$store.dispatch('auth/register', this.user).then(
+          data => {
+            this.message = data.message
+            this.successful = true
+          },
+          error => {
+            this.message =
+              (error.response && error.response.data) ||
+              error.message ||
+              error.toString()
+            this.successful = false
+          }
+        )
+      }
     }
   },
   computed: {
@@ -87,64 +129,9 @@ export default {
     if (this.loggedIn) {
       this.$router.push('/profile')
     }
-  },
-  methods: {
-    handleRegister () {
-      this.message = ''
-      this.submitted = true
-      this.$validator.validate().then(isValid => {
-        if (isValid) {
-          this.$store.dispatch('auth/register', this.user).then(
-            data => {
-              this.message = data.message
-              this.successful = true
-            },
-            error => {
-              this.message =
-                (error.response && error.response.data) ||
-                error.message ||
-                error.toString()
-              this.successful = false
-            }
-          )
-        }
-      })
-    }
   }
 }
 </script>
 
 <style scoped>
-label {
-  display: block;
-  margin-top: 10px;
-}
-
-.card-container.card {
-  max-width: 350px !important;
-  padding: 40px 40px;
-}
-
-.card {
-  background-color: #f7f7f7;
-  padding: 20px 25px 30px;
-  margin: 0 auto 25px;
-  margin-top: 50px;
-  -moz-border-radius: 2px;
-  -webkit-border-radius: 2px;
-  border-radius: 2px;
-  -moz-box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.3);
-  -webkit-box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.3);
-  box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.3);
-}
-
-.profile-img-card {
-  width: 96px;
-  height: 96px;
-  margin: 0 auto 10px;
-  display: block;
-  -moz-border-radius: 50%;
-  -webkit-border-radius: 50%;
-  border-radius: 50%;
-}
 </style>

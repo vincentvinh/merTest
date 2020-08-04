@@ -1,11 +1,11 @@
 export interface UserTypes {
-  username?: string;
+  full_name?: string;
   email?: string;
   password?: string;
 }
 
 export class User implements UserTypes {
-  username?: string;
+  full_name?: string;
   email?: string;
   password?: string;
 }

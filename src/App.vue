@@ -19,7 +19,7 @@
         </v-btn>
       </template>
       <v-list>
-        <v-list-item @click="home">
+        <v-list-item v-if="currentUser" @click="home">
           <v-list-item-title>Home</v-list-item-title>
         </v-list-item>
         <v-list-item @click="register">
