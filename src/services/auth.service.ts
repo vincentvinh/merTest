@@ -6,8 +6,8 @@ const API_URL = 'http://127.0.0.1:8000/api/v1/'
 class AuthService {
   login (user: User) {
     return axios
-      .post(API_URL + 'signin', {
-        username: user.username,
+      .post(API_URL + 'login/access-token', {
+        username: user.email,
         password: user.password
       })
       .then(response => {

@@ -90,9 +90,6 @@ export default {
   }),
 
   methods: {
-    validate () {
-      this.handleRegister()
-    },
     reset () {
       this.$refs.form.reset()
     },
@@ -102,7 +99,6 @@ export default {
     handleRegister () {
       this.message = ''
       this.submitted = true
-      console.log(this.user)
       if (this.isValid) {
         this.$store.dispatch('auth/register', this.user).then(
           data => {
