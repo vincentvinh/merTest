@@ -12,7 +12,7 @@
             <label for="username">Username</label>
             <input
               v-model="user.username"
-              v-validate="'required|min:3|max:20'"
+              :rules="[v => !!v || 'Item is required']"
               type="text"
               class="form-control"
               name="username"
@@ -26,7 +26,7 @@
             <label for="email">Email</label>
             <input
               v-model="user.email"
-              v-validate="'required|email|max:50'"
+              :rules="[v => !!v || 'Item is required']"
               type="email"
               class="form-control"
               name="email"
@@ -40,7 +40,7 @@
             <label for="password">Password</label>
             <input
               v-model="user.password"
-              v-validate="'required|min:6|max:40'"
+              :rules="[v => !!v || 'Item is required']"
               type="password"
               class="form-control"
               name="password"

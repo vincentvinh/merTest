@@ -1,52 +1,50 @@
 <template>
-  <div id="app">
-    <nav class="navbar navbar-expand navbar-dark bg-dark">
-      <a href class="navbar-brand" @click.prevent>bezKoder</a>
-      <div class="navbar-nav mr-auto">
-        <li class="nav-item">
-          <router-link to="/home" class="nav-link">
-            <font-awesome-icon icon="home" />Home
-          </router-link>
-        </li>
-        <li v-if="showAdminBoard" class="nav-item">
-          <router-link to="/admin" class="nav-link">Admin Board</router-link>
-        </li>
-        <li v-if="showModeratorBoard" class="nav-item">
-          <router-link to="/mod" class="nav-link">Moderator Board</router-link>
-        </li>
-        <li class="nav-item">
-          <router-link v-if="currentUser" to="/user" class="nav-link">User</router-link>
-        </li>
-      </div>
+  <div id="app" data-app>
+    <div>
+    <v-app-bar
+      color="deep-purple accent-4"
+      dense
+      dark
+    >
+       <div class="text-center">
+    <v-menu offset-y>
+      <template v-slot:activator="{ on, attrs }">
+        <v-btn
+          color="primary"
+          dark
+          v-bind="attrs"
+          v-on="on"
+        >
+          Dropdown
+        </v-btn>
+      </template>
+      <v-list>
+        <v-list-item @click="home">
+          <v-list-item-title>Home</v-list-item-title>
+        </v-list-item>
+        <v-list-item @click="register">
+          <v-list-item-title>Register</v-list-item-title>
+        </v-list-item>
+        <v-list-item @click="login">
+          <v-list-item-title>Login</v-list-item-title>
+        </v-list-item>
+      </v-list>
+    </v-menu>
+  </div>
 
-      <div v-if="!currentUser" class="navbar-nav ml-auto">
-        <li class="nav-item">
-          <router-link to="/register" class="nav-link">
-            <font-awesome-icon icon="user-plus" />Sign Up
-          </router-link>
-        </li>
-        <li class="nav-item">
-          <router-link to="/login" class="nav-link">
-            <font-awesome-icon icon="sign-in-alt" />Login
-          </router-link>
-        </li>
-      </div>
+      <v-toolbar-title>Page title</v-toolbar-title>
 
-      <div v-if="currentUser" class="navbar-nav ml-auto">
-        <li class="nav-item">
-          <router-link to="/profile" class="nav-link">
-            <font-awesome-icon icon="user" />
-            {{ currentUser.username }}
-          </router-link>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href @click.prevent="logOut">
-            <font-awesome-icon icon="sign-out-alt" />LogOut
-          </a>
-        </li>
-      </div>
-    </nav>
+      <v-spacer></v-spacer>
 
+      <v-btn icon>
+        <v-icon>mdi-heart</v-icon>
+      </v-btn>
+
+      <v-btn icon>
+        <v-icon>mdi-magnify</v-icon>
+      </v-btn>
+    </v-app-bar>
+  </div>
     <div class="container">
       <router-view />
     </div>
@@ -75,6 +73,18 @@ export default {
     }
   },
   methods: {
+    login () {
+      // Perform an action
+      this.$router.push({ path: 'login' })
+    },
+    register () {
+      // Perform an action
+      this.$router.push({ path: 'register' })
+    },
+    home () {
+      // Perform an action
+      this.$router.push({ path: 'home' })
+    },
     logOut () {
       this.$store.dispatch('auth/logout')
       this.$router.push('/login')
