@@ -88,8 +88,7 @@ export default {
         this.loading = false
         return
       }
-      console.log(this.user)
-      if (this.user.email && this.user.password) {
+      if (this.user && this.user.email && this.user.password) {
         this.$store.dispatch('auth/login', this.user).then(
           () => {
             this.$router.push('/profile')
@@ -103,6 +102,11 @@ export default {
           }
         )
       }
+    }
+  },
+  mounted () {
+    if (this.loggedIn) {
+      this.$router.push('/home')
     }
   }
 }

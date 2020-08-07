@@ -1,21 +1,20 @@
 import AuthService from '../../services/auth.service'
 import { User } from '@/models/user'
 
-const user = JSON.parse(localStorage.getItem('user'))
-const initialState = user
-  ? { status: { loggedIn: true }, user }
-  : { status: { loggedIn: false }, user: null }
-
+const token = localStorage.getItem('token') ? JSON.parse(localStorage.getItem('token')) : null
+const initialStateToken = token
+  ? { status: { loggedIn: true }, token }
+  : { status: { loggedIn: false }, token: null }
 export const auth = {
   namespaced: true,
-  state: initialState,
+  state: initialStateToken,
   actions: {
     login ({ commit }, user: User) {
       console.log(user)
       return AuthService.login(user).then(
-        user => {
-          commit('loginSuccess', user)
-          return Promise.resolve(user)
+        token => {
+          commit('loginSuccess', token)
+          return Promise.resolve(token)
         },
         error => {
           commit('loginFailure')
@@ -41,17 +40,17 @@ export const auth = {
     }
   },
   mutations: {
-    loginSuccess (state, user: User) {
+    loginSuccess (state, token) {
       state.status.loggedIn = true
-      state.user = user
+      state.token = token
     },
     loginFailure (state) {
       state.status.loggedIn = false
-      state.user = null
+      state.token = null
     },
     logout (state) {
       state.status.loggedIn = false
-      state.user = null
+      state.token = null
     },
     registerSuccess (state) {
       state.status.loggedIn = false

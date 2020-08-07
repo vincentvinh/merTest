@@ -8,21 +8,19 @@ class AuthService {
     const paramsUser = new URLSearchParams()
     paramsUser.append('username', user.email)
     paramsUser.append('password', user.password)
-    console.log(user.password, user.email)
 
     return axios
       .post(API_URL + 'login/access-token', paramsUser)
       .then(response => {
-        if (response.data.accessToken) {
-          localStorage.setItem('user', JSON.stringify(response.data))
+        if (response.data.access_token) {
+          localStorage.setItem('token', JSON.stringify(response.data.access_token))
         }
-
-        return response.data
+        return response.data.access_token
       })
   }
 
   logout () {
-    localStorage.removeItem('user')
+    localStorage.removeItem('token')
   }
 
   register (user: User) {

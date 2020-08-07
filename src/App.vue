@@ -22,11 +22,14 @@
         <v-list-item v-if="currentUser" @click="home">
           <v-list-item-title>Home</v-list-item-title>
         </v-list-item>
-        <v-list-item @click="register">
+        <v-list-item  v-if="!currentUser" @click="register">
           <v-list-item-title>Register</v-list-item-title>
         </v-list-item>
-        <v-list-item @click="login">
+        <v-list-item v-if="!currentUser" @click="login">
           <v-list-item-title>Login</v-list-item-title>
+        </v-list-item>
+        <v-list-item v-if="currentUser" @click="logOut">
+          <v-list-item-title>Logout</v-list-item-title>
         </v-list-item>
       </v-list>
     </v-menu>
@@ -55,7 +58,7 @@
 export default {
   computed: {
     currentUser () {
-      return this.$store.state.auth.user
+      return this.$store.state.auth.status.loggedIn
     },
     showAdminBoard () {
       if (this.currentUser && this.currentUser.roles) {
@@ -74,15 +77,12 @@ export default {
   },
   methods: {
     login () {
-      // Perform an action
       this.$router.push({ path: 'login' })
     },
     register () {
-      // Perform an action
       this.$router.push({ path: 'register' })
     },
     home () {
-      // Perform an action
       this.$router.push({ path: 'home' })
     },
     logOut () {
